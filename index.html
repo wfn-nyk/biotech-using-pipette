@@ -146,73 +146,135 @@
           </button>
         );
 
-        // --- TAB 1: VIRTUAL PIPETTE LAB ---
-        const PipetteSimulationHub = () => {
-          const [plungerLevel, setPlungerLevel] = useState(0); 
-          const [liquidLevel, setLiquidLevel] = useState(0); 
-          useEffect(() => {
-            if (plungerLevel > 0) {
-               const remaining = Math.max(0, 100 - (plungerLevel * 1.2)); 
-               setLiquidLevel(remaining);
-            } else {
-               setLiquidLevel(100);
-            }
-          }, [plungerLevel]);
-          const handleSliderChange = (e) => { setPlungerLevel(parseInt(e.target.value)); };
+// --- TAB 1: VIRTUAL PIPETTE LAB ---
+const PipetteSimulationHub = () => {
+  const [plungerLevel, setPlungerLevel] = useState(0); 
+  const [liquidLevel, setLiquidLevel] = useState(100); // Default full based on your logic
+  const sliderRef = useRef(null);
 
-          return (
-            <div className="h-full flex flex-col gap-8 animate-in fade-in duration-500">
-              <div className="flex flex-col lg:flex-row gap-8 h-[600px]">
-                <div className="flex-1 flex flex-col gap-6">
-                  <header>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">Interactive Mode</div>
-                    <h1 className="text-4xl font-bold text-slate-900 mb-2">Master the "Feel"</h1>
-                    <p className="text-slate-600 text-lg leading-relaxed">Operate the virtual plunger on the right. Pay attention to the stops.</p>
-                  </header>
-                  <div className="flex-1 relative">
-                     {plungerLevel < 40 && (<div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-slate-500"><h3 className="font-bold text-lg mb-2 text-slate-700">Rest Position</h3><p>Drag the plunger <strong>down</strong> to begin.</p></div>)}
-                     {plungerLevel >= 40 && plungerLevel <= 60 && (<div className="p-6 rounded-2xl bg-blue-50 border-l-4 border-blue-500 shadow-md animate-in slide-in-from-left-2"><h3 className="font-bold text-xl text-blue-900 mb-2">First Stop (Pressure Point)</h3><p className="text-blue-800">This is the first resistance you feel. It indicates that you have measured the <strong>exact volume</strong> set on the dial.</p><div className="mt-4 flex items-center gap-2 text-sm font-bold text-blue-700"><CheckCircle size={16}/> Stop here to Aspirate (Draw Up)</div></div>)}
-                     {plungerLevel > 60 && (<div className="p-6 rounded-2xl bg-amber-50 border-l-4 border-amber-500 shadow-md animate-in slide-in-from-left-2"><h3 className="font-bold text-xl text-amber-900 mb-2">Second Stop (Blowout)</h3><p className="text-amber-800 mb-3"><strong>Warning:</strong> We do NOT reach this stop when drawing liquid. It is ONLY used when dispensing to push out the last drop.</p>{plungerLevel > 90 && (<div className="bg-white/50 p-3 rounded-lg text-sm font-bold text-amber-900">Tip is completely empty!</div>)}</div>)}
-                  </div>
-                </div>
-                <div className="flex-[2] bg-slate-800 rounded-3xl relative overflow-hidden flex flex-col items-center justify-center p-4 md:p-8 shadow-inner border border-slate-700">
-                    <div className="flex gap-24 items-center justify-center w-full h-full relative pr-16"> 
-                        <div className="relative h-[450px] w-32 flex flex-col items-center">
-                          <div className="absolute top-0 w-full flex flex-col items-center transition-transform duration-75 ease-out z-0" style={{ transform: `translateY(${plungerLevel * 1.5}px)` }}><div className="w-24 h-6 bg-blue-500 rounded-full shadow-lg border-b-4 border-blue-700 cursor-pointer hover:bg-blue-400 transition-colors"></div><div className="w-4 h-48 bg-slate-400 border-x border-slate-500"></div></div>
-                          <div className="absolute top-[100px] w-28 h-48 bg-slate-200 rounded-lg z-10 flex flex-col items-center justify-start pt-6 shadow-2xl border-b-4 border-slate-300"><div className="text-[9px] font-bold text-slate-500 mb-1 tracking-widest">P20 MODEL</div><div className="w-16 h-16 rounded-full bg-slate-900 border-4 border-slate-400 flex flex-col items-center justify-center shadow-inner"><span className="text-green-400 font-mono text-lg font-bold">20.0</span><span className="text-slate-400 font-mono text-[8px]">µL</span></div></div>
-                          <div className="absolute top-[290px] w-8 h-32 bg-slate-300 border-x border-slate-400 z-0"></div>
-                          <div className="absolute top-[410px] z-20"><div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[110px] border-t-blue-100/60 relative drop-shadow-md">{liquidLevel > 0 && (<div className="absolute top-[-110px] left-[-14px] w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[110px] border-t-blue-500 transition-all duration-100 origin-top" style={{ transform: `scaleY(${liquidLevel / 100})` }}></div>)}</div></div>
-                        </div>
-                        <div className="relative h-[400px] w-24 bg-slate-900 rounded-full border border-slate-700 shadow-inner flex-shrink-0 ml-8">
-                            <div className="absolute -right-48 top-0 h-full flex flex-col justify-between py-4 text-xs font-bold text-slate-400 text-left w-44 pointer-events-none z-20">
-                                <div className={`transition-all duration-300 flex items-center gap-2 ${plungerLevel < 5 ? "text-white scale-105" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> Rest (Start)</div>
-                                <div className={`transition-all duration-300 flex items-center gap-2 ${plungerLevel >= 40 && plungerLevel <= 60 ? "text-blue-400 scale-110 font-extrabold" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> First Stop (50%)</div>
-                                <div className={`transition-all duration-300 flex items-center gap-2 ${plungerLevel >= 90 ? "text-amber-500 scale-110 font-extrabold" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> Second Stop (100%)</div>
-                            </div>
-                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-600"></div>
-                            <div className="absolute bottom-4 left-0 w-full h-0.5 bg-amber-900"></div>
-                            <input type="range" min="0" max="100" value={plungerLevel} onChange={handleSliderChange} className="pipette-slider-vertical" title="Drag down to push plunger"/>
-                            <div className="absolute left-2 right-2 h-12 bg-blue-600 rounded-xl border-2 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.4)] pointer-events-none transition-transform duration-75 ease-out" style={{ top: '0', transform: `translateY(${plungerLevel * 3.5}px)` }}><div className="w-full h-full flex items-center justify-center"><div className="w-12 h-1 bg-blue-300/50 rounded-full"></div></div></div>
-                        </div>
+  // Logic from your provided snippet
+  useEffect(() => {
+    if (plungerLevel > 0) {
+       const remaining = Math.max(0, 100 - (plungerLevel * 1.2)); 
+       setLiquidLevel(remaining);
+    } else {
+       setLiquidLevel(100);
+    }
+  }, [plungerLevel]);
+
+  // --- Custom Drag Handler ---
+  // This replaces the standard input change to allow for smoother dragging
+  const handlePointerDown = (e) => {
+    e.target.setPointerCapture(e.pointerId);
+    updatePlungerPosition(e.clientY);
+  };
+
+  const handlePointerMove = (e) => {
+    if (e.buttons > 0 || e.pointerType === 'touch') {
+      updatePlungerPosition(e.clientY);
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    e.target.releasePointerCapture(e.pointerId);
+  };
+
+  const updatePlungerPosition = (clientY) => {
+    if (!sliderRef.current) return;
+    
+    const rect = sliderRef.current.getBoundingClientRect();
+    const offsetY = clientY - rect.top;
+    
+    // Calculate visual top (centering the handle by subtracting half its height: 24px)
+    let visualTop = offsetY - 24;
+    
+    // Clamp visual range (0 to 350px based on the CSS transform factor of 3.5)
+    if (visualTop < 0) visualTop = 0;
+    if (visualTop > 350) visualTop = 350;
+
+    // Convert back to 0-100 scale
+    const newValue = Math.round(visualTop / 3.5);
+    setPlungerLevel(newValue);
+  };
+
+  return (
+    <div className="h-full flex flex-col gap-8 animate-in fade-in duration-500">
+      <div className="flex flex-col lg:flex-row gap-8 min-h-[600px]">
+        
+        {/* LEFT PANEL: Instructions & Feedback */}
+        <div className="flex-1 flex flex-col gap-6">
+          <header>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">Interactive Mode</div>
+            <h1 className="text-4xl font-bold text-slate-900 mb-2">Master the "Feel"</h1>
+            <p className="text-slate-600 text-lg leading-relaxed">Operate the virtual plunger on the right. Pay attention to the stops.</p>
+          </header>
+          <div className="flex-1 relative">
+             {plungerLevel < 40 && (<div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-slate-500"><h3 className="font-bold text-lg mb-2 text-slate-700">Rest Position</h3><p>Drag the blue handle <strong>down</strong> to begin.</p></div>)}
+             {plungerLevel >= 40 && plungerLevel <= 60 && (<div className="p-6 rounded-2xl bg-blue-50 border-l-4 border-blue-500 shadow-md animate-in slide-in-from-left-2"><h3 className="font-bold text-xl text-blue-900 mb-2">First Stop (Pressure Point)</h3><p className="text-blue-800">This is the first resistance you feel. It indicates that you have measured the <strong>exact volume</strong> set on the dial.</p><div className="mt-4 flex items-center gap-2 text-sm font-bold text-blue-700"><CheckCircle size={16}/> Stop here to Aspirate (Draw Up)</div></div>)}
+             {plungerLevel > 60 && (<div className="p-6 rounded-2xl bg-amber-50 border-l-4 border-amber-500 shadow-md animate-in slide-in-from-left-2"><h3 className="font-bold text-xl text-amber-900 mb-2">Second Stop (Blowout)</h3><p className="text-amber-800 mb-3"><strong>Warning:</strong> We do NOT reach this stop when drawing liquid. It is ONLY used when dispensing to push out the last drop.</p>{plungerLevel > 90 && (<div className="bg-white/50 p-3 rounded-lg text-sm font-bold text-amber-900">Tip is completely empty!</div>)}</div>)}
+          </div>
+        </div>
+
+        {/* RIGHT PANEL: Pipette Visuals */}
+        <div className="flex-[2] bg-slate-800 rounded-3xl relative overflow-hidden flex flex-col items-center justify-center p-4 md:p-8 shadow-inner border border-slate-700">
+            
+            {/* SCALING FIX: Scale down on mobile, up on desktop */}
+            <div className="transform scale-[0.60] sm:scale-75 md:scale-100 transition-transform duration-300 origin-center">
+                <div className="flex gap-12 md:gap-24 items-center justify-center relative pr-8 md:pr-16"> 
+                    
+                    {/* Pipette Assembly */}
+                    <div className="relative h-[450px] w-32 flex flex-col items-center shrink-0">
+                      <div className="absolute top-0 w-full flex flex-col items-center transition-transform duration-75 ease-out z-0" style={{ transform: `translateY(${plungerLevel * 1.5}px)` }}><div className="w-24 h-6 bg-blue-500 rounded-full shadow-lg border-b-4 border-blue-700 cursor-pointer hover:bg-blue-400 transition-colors"></div><div className="w-4 h-48 bg-slate-400 border-x border-slate-500"></div></div>
+                      <div className="absolute top-[100px] w-28 h-48 bg-slate-200 rounded-lg z-10 flex flex-col items-center justify-start pt-6 shadow-2xl border-b-4 border-slate-300"><div className="text-[9px] font-bold text-slate-500 mb-1 tracking-widest">P20 MODEL</div><div className="w-16 h-16 rounded-full bg-slate-900 border-4 border-slate-400 flex flex-col items-center justify-center shadow-inner"><span className="text-green-400 font-mono text-lg font-bold">20.0</span><span className="text-slate-400 font-mono text-[8px]">µL</span></div></div>
+                      <div className="absolute top-[290px] w-8 h-32 bg-slate-300 border-x border-slate-400 z-0"></div>
+                      <div className="absolute top-[410px] z-20"><div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[110px] border-t-blue-100/60 relative drop-shadow-md">{liquidLevel > 0 && (<div className="absolute top-[-110px] left-[-14px] w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[110px] border-t-blue-500 transition-all duration-100 origin-top" style={{ transform: `scaleY(${liquidLevel / 100})` }}></div>)}</div></div>
                     </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm"><h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><BookOpen size={24} className="text-blue-600"/> Operation Sequence</h2><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"><StepCard num="1" title="Rest Position" desc="Tip is empty. Plunger is up." /><StepCard num="2" title="First Stop" desc="Press to feel resistance." highlight="text-blue-600" /><StepCard num="3" title="Immerse" desc="Put tip into liquid. Do NOT press further!" /><StepCard num="4" title="Aspirate" desc="Slowly release plunger. Liquid fills tip." color="bg-blue-50" /><StepCard num="5" title="Dispense" desc="Press to First Stop in new tube." /><StepCard num="6" title="Blowout" desc="Press to Second Stop to expel all drops." highlight="text-amber-600" /></div><div className="grid grid-cols-6 gap-4 mt-4 h-32 items-end px-4"><PipetteDiagram state="rest" liquid={0} /><PipetteDiagram state="first" liquid={0} arrow="down" /><PipetteDiagram state="first" liquid={0} container="beaker" /><PipetteDiagram state="rest" liquid={100} arrow="up" container="beaker"/><PipetteDiagram state="first" liquid={20} arrow="down" container="tube"/><PipetteDiagram state="second" liquid={0} arrow="down-hard" container="tube"/></div></div>
-            </div>
-          );
-        };
 
-        const StepCard = ({ num, title, desc, highlight = "text-slate-900", color = "bg-white" }) => (<div className={`p-3 rounded-xl border border-slate-100 ${color} text-center`}><div className="inline-block w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs font-bold leading-6 mb-2">{num}</div><h4 className={`font-bold text-sm mb-1 ${highlight}`}>{title}</h4><p className="text-[10px] text-slate-500 leading-tight">{desc}</p></div>);
-        const PipetteDiagram = ({ state, liquid, arrow, container }) => (
-           <div className="flex flex-col items-center h-full justify-end pb-2 relative border-b-2 border-transparent hover:border-slate-200 transition-colors">
-              {arrow === 'down' && <div className="absolute top-0 text-blue-500 animate-bounce"><ChevronDown size={16}/></div>}
-              {arrow === 'down-hard' && <div className="absolute top-0 text-amber-500 animate-bounce font-bold flex flex-col items-center"><ChevronDown size={16}/><ChevronDown size={16} className="-mt-2"/></div>}
-              {arrow === 'up' && <div className="absolute top-0 text-green-500 animate-bounce rotate-180"><ChevronDown size={16}/></div>}
-              <div className={`w-4 bg-slate-300 border border-slate-400 transition-all duration-300 relative z-20 ${state === 'rest' ? 'h-16' : ''} ${state === 'first' ? 'h-12 translate-y-4' : ''} ${state === 'second' ? 'h-8 translate-y-8' : ''}`}></div><div className="w-6 h-12 bg-slate-200 border border-slate-400 rounded-sm z-10 relative"></div><div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-100 relative z-10">{liquid > 0 && <div className="absolute -top-[40px] -left-[6px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-500 scale-y-100 origin-top"></div>}{liquid === 20 && <div className="absolute -top-[40px] -left-[6px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-500 scale-y-[0.2] origin-top"></div>}</div>
-              {container === 'beaker' && <div className="absolute bottom-0 w-12 h-10 bg-blue-100 border border-blue-200 rounded-b-md z-0"><div className="absolute bottom-0 w-full h-6 bg-blue-200/50"></div></div>}
-              {container === 'tube' && <div className="absolute bottom-0 w-6 h-10 bg-slate-50 border border-slate-200 rounded-b-full z-0"></div>}
-           </div>
-        );
+                    {/* Interactive Controller (Pointer Events) */}
+                    <div 
+                        ref={sliderRef}
+                        className="relative h-[400px] w-24 bg-slate-900 rounded-full border border-slate-700 shadow-inner flex-shrink-0 ml-2 md:ml-8 cursor-pointer touch-none select-none"
+                        onPointerDown={handlePointerDown}
+                        onPointerMove={handlePointerMove}
+                        onPointerUp={handlePointerUp}
+                        onPointerLeave={handlePointerUp}
+                    >
+                        <div className="absolute -right-32 md:-right-48 top-0 h-full flex flex-col justify-between py-4 text-xs font-bold text-slate-400 text-left w-44 pointer-events-none z-20 select-none">
+                            <div className={`transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${plungerLevel < 5 ? "text-white scale-105" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> Rest (Start)</div>
+                            <div className={`transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${plungerLevel >= 40 && plungerLevel <= 60 ? "text-blue-400 scale-110 font-extrabold" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> First Stop (50%)</div>
+                            <div className={`transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${plungerLevel >= 90 ? "text-amber-500 scale-110 font-extrabold" : ""}`}><div className="w-2 h-2 bg-current rounded-full"></div> Second Stop (100%)</div>
+                        </div>
+                        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-600 pointer-events-none"></div>
+                        <div className="absolute bottom-4 left-0 w-full h-0.5 bg-amber-900 pointer-events-none"></div>
+                        {/* Visual Handle */}
+                        <div className="absolute left-2 right-2 h-12 bg-blue-600 rounded-xl border-2 border-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-transform duration-75 ease-out z-20 pointer-events-none" style={{ top: '0', transform: `translateY(${plungerLevel * 3.5}px)` }}><div className="w-full h-full flex items-center justify-center"><div className="w-12 h-1 bg-blue-300/50 rounded-full"></div></div></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </div>
+
+      {/* Bottom Card: Sequence */}
+      <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm"><h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><BookOpen size={24} className="text-blue-600"/> Operation Sequence</h2><div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"><StepCard num="1" title="Rest Position" desc="Tip is empty. Plunger is up." /><StepCard num="2" title="First Stop" desc="Press to feel resistance." highlight="text-blue-600" /><StepCard num="3" title="Immerse" desc="Put tip into liquid. Do NOT press further!" /><StepCard num="4" title="Aspirate" desc="Slowly release plunger. Liquid fills tip." color="bg-blue-50" /><StepCard num="5" title="Dispense" desc="Press to First Stop in new tube." /><StepCard num="6" title="Blowout" desc="Press to Second Stop to expel all drops." highlight="text-amber-600" /></div><div className="grid grid-cols-3 md:grid-cols-6 gap-4 mt-4 h-32 items-end px-4"><PipetteDiagram state="rest" liquid={0} /><PipetteDiagram state="first" liquid={0} arrow="down" /><PipetteDiagram state="first" liquid={0} container="beaker" /><PipetteDiagram state="rest" liquid={100} arrow="up" container="beaker"/><PipetteDiagram state="first" liquid={20} arrow="down" container="tube"/><PipetteDiagram state="second" liquid={0} arrow="down-hard" container="tube"/></div></div>
+    </div>
+  );
+};
+
+// --- Helper Components ---
+const StepCard = ({ num, title, desc, highlight = "text-slate-900", color = "bg-white" }) => (<div className={`p-3 rounded-xl border border-slate-100 ${color} text-center h-full flex flex-col items-center`}><div className="inline-block w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs font-bold leading-6 mb-2">{num}</div><h4 className={`font-bold text-sm mb-1 ${highlight}`}>{title}</h4><p className="text-[10px] text-slate-500 leading-tight">{desc}</p></div>);
+
+const PipetteDiagram = ({ state, liquid, arrow, container }) => (
+    <div className="flex flex-col items-center h-full justify-end pb-2 relative border-b-2 border-transparent hover:border-slate-200 transition-colors">
+       {arrow === 'down' && <div className="absolute top-0 text-blue-500 animate-bounce"><ChevronDown size={16}/></div>}
+       {arrow === 'down-hard' && <div className="absolute top-0 text-amber-500 animate-bounce font-bold flex flex-col items-center"><ChevronDown size={16}/><ChevronDown size={16} className="-mt-2"/></div>}
+       {arrow === 'up' && <div className="absolute top-0 text-green-500 animate-bounce rotate-180"><ChevronDown size={16}/></div>}
+       <div className={`w-4 bg-slate-300 border border-slate-400 transition-all duration-300 relative z-20 ${state === 'rest' ? 'h-16' : ''} ${state === 'first' ? 'h-12 translate-y-4' : ''} ${state === 'second' ? 'h-8 translate-y-8' : ''}`}></div><div className="w-6 h-12 bg-slate-200 border border-slate-400 rounded-sm z-10 relative"></div><div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-100 relative z-10">{liquid > 0 && <div className="absolute -top-[40px] -left-[6px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-500 scale-y-100 origin-top"></div>}{liquid === 20 && <div className="absolute -top-[40px] -left-[6px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[40px] border-t-blue-500 scale-y-[0.2] origin-top"></div>}</div>
+       {container === 'beaker' && <div className="absolute bottom-0 w-12 h-10 bg-blue-100 border border-blue-200 rounded-b-md z-0"><div className="absolute bottom-0 w-full h-6 bg-blue-200/50"></div></div>}
+       {container === 'tube' && <div className="absolute bottom-0 w-6 h-10 bg-slate-50 border border-slate-200 rounded-b-full z-0"></div>}
+    </div>
+);
+
 
         // --- TAB 2: BIOTECH 101 ---
         const BiotechKnowledgeBase = () => {
