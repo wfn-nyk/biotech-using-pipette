@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Exploring Pipette | Virtual Lab</title>
+    <title>Exploring microipette | Virtual Lab</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -107,12 +107,12 @@
                        <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" onError={(e) => {e.target.style.display='none'; e.target.parentNode.innerHTML='🔬'}} />
                     </div>
                     <div className="hidden md:block">
-                       <div className="font-bold text-lg tracking-tight leading-tight">Exploring Pipette</div>
-                       <div className="text-[10px] text-slate-400 font-medium">Virtual Pipette - Understand the operation of a pipette</div>
+                       <div className="font-bold text-lg tracking-tight leading-tight">Exploring Micropipette</div>
+                       <div className="text-[10px] text-slate-400 font-medium">Virtual Micropipette - Understand the operation of a micropipette</div>
                     </div>
                   </div>
                   <div className="mt-6 px-2 space-y-2">
-                    <NavButton id="guide" active={activeTab} set={setActiveTab} icon={<Activity />} label="Virtual Pipette Lab" />
+                    <NavButton id="guide" active={activeTab} set={setActiveTab} icon={<Activity />} label="Virtual Micropipette Lab" />
                     <NavButton id="biotech" active={activeTab} set={setActiveTab} icon={<BookOpen />} label="Biotech 101" />
                     <NavButton id="wfn" active={activeTab} set={setActiveTab} icon={<ExternalLink />} label="Biotech in WFN" />
                     <NavButton id="utility" active={activeTab} set={setActiveTab} icon={<Crosshair />} label="Why It Matters" />
